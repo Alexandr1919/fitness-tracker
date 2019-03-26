@@ -9,7 +9,7 @@ export class TrainingService {
     { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 }
   ];
   // in order to use it in header component and hide nav bar
-  exerciseChanged = new Subject<Exercise>();
+  trainingChanged = new Subject<Exercise>();
 
   // should store the exercise user selected
   private runningTraining: Exercise;
@@ -23,8 +23,12 @@ export class TrainingService {
   startTraining(selectedId: string) {
     // find the exercise user selected
     this.runningTraining = this.availableTrainings.find(tr => tr.id === selectedId);
-    this.exerciseChanged.next({
+    this.trainingChanged.next({
       ...this.runningTraining
     });
+  }
+
+  getCurrentTraining() {
+    return {...this.runningTraining};
   }
 }

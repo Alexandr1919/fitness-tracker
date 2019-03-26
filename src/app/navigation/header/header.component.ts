@@ -2,6 +2,7 @@ import {Component, OnInit, EventEmitter, Output, OnDestroy} from '@angular/core'
 import {AuthService} from '../../auth/auth.service';
 import {Subscription} from 'rxjs';
 import {TrainingService} from '../../training/training.service';
+import {Exercise} from '../../exercise.model';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +12,7 @@ import {TrainingService} from '../../training/training.service';
 export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sidenavToggle = new EventEmitter<void>();
   isAuth: boolean;
-  isTraining: boolean;
+  isTraining: Exercise;
   authSubscription: Subscription;
   isTrainingSubscription: Subscription;
 
@@ -23,7 +24,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.isAuth = authStatus;
     });
 
-    this.isTrainingSubscription = this.trainingService.isTraining.subscribe(trainingStatus => {
+    this.isTrainingSubscription = this.trainingService.trainingChanged.subscribe(trainingStatus => {
       this.isTraining = trainingStatus;
     });
   }
