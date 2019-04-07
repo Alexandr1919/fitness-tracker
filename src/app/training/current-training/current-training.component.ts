@@ -1,8 +1,8 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import {MatDialog} from '@angular/material';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
+import { TrainingService } from '../training.service';
 import { StopTrainingComponent } from './stop-training.component';
-import {TrainingService} from '../training.service';
 
 @Component({
   selector: 'app-current-training',
@@ -10,19 +10,21 @@ import {TrainingService} from '../training.service';
   styleUrls: ['./current-training.component.sass']
 })
 export class CurrentTrainingComponent implements OnInit {
-  @Output() trainingExit = new EventEmitter<void>()
   progress = 0;
   timer: number;
+  TRAINING_COMPLETE_SCALE = 100;
   constructor(private dialog: MatDialog, private trainingService: TrainingService) { }
 
   ngOnInit() {
     this.startTimer();
   }
   startTimer() {
-    const step = this.trainingService.getCurrentTraining().duration / 100 * 1000;
+    // count duration percentage of the specific training
+    const step = this.trainingService.getCurrentTraining().duration / this.TRAINING_COMPLETE_SCALE * 1000;
     this.timer = setInterval(() => {
       this.progress = this.progress + 1;
-      if (this.progress >= 100) {
+      if (this.progress >= this.TRAINING_COMPLETE_SCALE) {
+        this.trainingService.completeTraining();
         clearInterval(this.timer);
       }
     }, step);
@@ -30,14 +32,14 @@ export class CurrentTrainingComponent implements OnInit {
 
   onStop() {
     clearInterval(this.timer);
+    // open angular material dialog window and pass data to it
     const dialogRef = this.dialog.open(StopTrainingComponent, {
       data: {
         progress: this.progress
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
-      result ? this.trainingService.trainingChanged.next(result) : this.startTimer();
+      result ? this.trainingService.cancelTraining(this.progress) : this.startTimer();
     });
   }
 

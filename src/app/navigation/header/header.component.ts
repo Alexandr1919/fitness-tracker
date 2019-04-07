@@ -1,8 +1,9 @@
-import {Component, OnInit, EventEmitter, Output, OnDestroy} from '@angular/core';
-import {AuthService} from '../../auth/auth.service';
-import {Subscription} from 'rxjs';
-import {TrainingService} from '../../training/training.service';
-import {Exercise} from '../../exercise.model';
+import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+
+import { AuthService } from '../../auth/auth.service';
+import { TrainingService } from '../../training/training.service';
+import { Training } from '../../training.model';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +13,7 @@ import {Exercise} from '../../exercise.model';
 export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sidenavToggle = new EventEmitter<void>();
   isAuth: boolean;
-  isTraining: Exercise;
+  isTraining: Training;
   authSubscription: Subscription;
   isTrainingSubscription: Subscription;
 
@@ -20,7 +21,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // subscribe to authChange trigger
     this.authSubscription = this.authService.authChange.subscribe(authStatus => {
+      // and bind it to private boolean variable
       this.isAuth = authStatus;
     });
 
@@ -38,6 +41,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // don't forget to unsubscribe
     this.authSubscription.unsubscribe();
   }
 

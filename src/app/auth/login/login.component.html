@@ -9,13 +9,16 @@
         ngModel
         #emailInput="ngModel"
       >
+
       <mat-error *ngIf="emailInput.hasError('required')">
         Field must not be empty
       </mat-error>
+
       <mat-error *ngIf="!emailInput.hasError('required')">
         E-mail is invalid
       </mat-error>
     </mat-form-field>
+
     <mat-form-field>
       <input
         type="password"
@@ -26,6 +29,7 @@
         ngModel
       >
     </mat-form-field>
+
     <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
   </form>
 </section>
