@@ -11,7 +11,7 @@ import { StopTrainingComponent } from './stop-training.component';
 })
 export class CurrentTrainingComponent implements OnInit {
   progress = 0;
-  timer: number;
+  timer: NodeJS.Timer;
   TRAINING_COMPLETE_SCALE = 100;
   constructor(private dialog: MatDialog, private trainingService: TrainingService) { }
 
@@ -41,6 +41,10 @@ export class CurrentTrainingComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       result ? this.trainingService.cancelTraining(this.progress) : this.startTimer();
     });
+  }
+
+  testFunction() {
+    return 'test phrase';
   }
 
 }

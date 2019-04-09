@@ -22,4 +22,10 @@ describe('CurrentTrainingComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should test test func', () => {
+    expect(component.testFunction())
+      .toEqual('test phase'); // matcher expression
+
+  });
 });
