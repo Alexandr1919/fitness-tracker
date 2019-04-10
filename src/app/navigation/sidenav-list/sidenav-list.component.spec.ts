@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { RouterTestingModule } from '@angular/router/testing';
+import { MaterialModule } from '../../material.module';
 import { SidenavListComponent } from './sidenav-list.component';
+import { AuthService } from '../../auth/auth.service';
 
 describe('SidenavListComponent', () => {
   let component: SidenavListComponent;
@@ -8,7 +11,9 @@ describe('SidenavListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SidenavListComponent ]
+      declarations: [SidenavListComponent],
+      imports: [MaterialModule, RouterTestingModule],
+      providers: [AuthService]
     })
     .compileComponents();
   }));

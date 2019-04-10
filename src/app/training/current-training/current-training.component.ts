@@ -43,8 +43,4 @@ export class CurrentTrainingComponent implements OnInit {
     });
   }
 
-  testFunction() {
-    return 'test phrase';
-  }
-
 }

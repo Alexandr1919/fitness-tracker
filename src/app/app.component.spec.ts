@@ -22,7 +22,6 @@ describe('AppComponent', () => {
         TrainingService
       ],
       imports: [
-        RouterModule,
         MaterialModule,
         BrowserAnimationsModule,
         RouterTestingModule
