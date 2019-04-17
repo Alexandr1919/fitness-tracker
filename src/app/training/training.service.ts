@@ -1,24 +1,41 @@
-import { Training } from '../training.model';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Subject } from 'rxjs';
 
+import { Training } from '../training.model';
+
+@Injectable()
 export class TrainingService {
-  private availableTrainings: Training[] = [
-    { id: 'crunches', name: 'Crunches', duration: /*30*/5, calories: 8 },
-    { id: 'touch-toes', name: 'Touch Toes', duration: /*180*/5, calories: 15 },
-    { id: 'side-lunges', name: 'Side Lunges', duration: /*120*/5, calories: 18 },
-    { id: 'burpees', name: 'Burpees', duration: /*60*/5, calories: 8 }
-  ];
+  private availableTrainings: Training[] = [];
   // in order to use it in header component and hide nav bar
   trainingChanged = new Subject<Training>();
+  // triggers whenever we got new exercises after exercises finished
+  trainingsChanged = new Subject<Training[]>();
 
   // should store the training user selected
   private currentTraining: Training;
   private trainings: Training[] = [];
 
-  // in order to use copy of the array
-  getAvailableTrainings() {
-    // get the copy of initial array to prevent its mutation
-    return this.availableTrainings.slice();
+  constructor(private db: AngularFirestore) {
+  }
+
+  fetchAvailableTrainings() {
+    this.db
+      .collection('availableTrainings')
+      .snapshotChanges()
+      .pipe(map(docArray => {
+        return docArray.map(doc => {
+          return {
+            id: doc.payload.doc.id,
+            ...doc.payload.doc.data()
+          } as Training;
+        });
+      }))
+      .subscribe((trainings: Training[]) => {
+        this.availableTrainings = trainings;
+        this.trainingsChanged.next([...this.availableTrainings]);
+      });
   }
 
   // called on click start button
