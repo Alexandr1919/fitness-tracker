@@ -1,10 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { MaterialModule } from '../../material.module';
 import { PastTrainingComponent } from './past-training.component';
 import { TrainingService } from '../training.service';
+import { CompletedPipe } from './pipes/completed.pipe';
 
 describe('PastTrainingComponent', () => {
   let component: PastTrainingComponent;
@@ -12,7 +13,7 @@ describe('PastTrainingComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [PastTrainingComponent],
+      declarations: [PastTrainingComponent, CompletedPipe],
       imports: [FormsModule, MaterialModule, BrowserAnimationsModule],
       providers: [TrainingService]
     })

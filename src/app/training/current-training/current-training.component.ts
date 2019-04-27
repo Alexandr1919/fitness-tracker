@@ -11,7 +11,7 @@ import { StopTrainingComponent } from './stop-training.component';
 })
 export class CurrentTrainingComponent implements OnInit {
   progress = 0;
-  timer: NodeJS.Timer;
+  timer;
   TRAINING_COMPLETE_SCALE = 100;
   constructor(private dialog: MatDialog, private trainingService: TrainingService) { }
 

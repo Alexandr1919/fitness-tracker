@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
 import { SignupComponent } from './signup.component';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;

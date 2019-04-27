@@ -5,7 +5,7 @@ import { HeaderComponent } from './navigation/header/header.component';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './auth/services/auth.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TrainingService } from './training/training.service';
 

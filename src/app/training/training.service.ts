@@ -61,6 +61,7 @@ export class TrainingService {
   }
 
   getFinishedExercises() {
+    console.log(this.trainings);
     return this.trainings.slice();
   }
 }
