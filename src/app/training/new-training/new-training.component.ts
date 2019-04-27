@@ -19,7 +19,7 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // get array of available training in the component
-    this.trainingSubscription = this.trainingService.trainingsChanged.subscribe(
+    this.trainingSubscription = this.trainingService.trainingsArrayChanged.subscribe(
       trainingTypes => this.trainingTypes = trainingTypes
     );
     this.trainingService.fetchAvailableTrainings();

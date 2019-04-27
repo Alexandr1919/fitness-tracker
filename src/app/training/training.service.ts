@@ -11,11 +11,11 @@ export class TrainingService {
   // in order to use it in header component and hide nav bar
   trainingChanged = new Subject<Training>();
   // triggers whenever we got new exercises after exercises finished
-  trainingsChanged = new Subject<Training[]>();
+  trainingsArrayChanged = new Subject<Training[]>();
+  finishedTrainingsArrayChanged = new Subject<Training[]>();
 
   // should store the training user selected
   private currentTraining: Training;
-  private trainings: Training[] = [];
 
   constructor(private db: AngularFirestore) {
   }
@@ -34,12 +34,16 @@ export class TrainingService {
       }))
       .subscribe((trainings: Training[]) => {
         this.availableTrainings = trainings;
-        this.trainingsChanged.next([...this.availableTrainings]);
+        this.trainingsArrayChanged.next([...this.availableTrainings]);
       });
   }
 
   // called on click start button
   startTraining(selectedId: string) {
+    // this is how you can update traingings
+    // this.db.doc('availableTrainings' + selectedId).update({
+    //   lastSelected: new Date()
+    // });
     // find the exercise user selected
     this.currentTraining = this.availableTrainings.find(tr => tr.id === selectedId);
     this.trainingChanged.next({
@@ -49,7 +53,7 @@ export class TrainingService {
 
   completeTraining() {
     // save completed trainings in the training list
-    this.trainings.push({
+    this.addDataToDatabase({
       ...this.currentTraining,
       date: new Date(),
       status: 'completed'
@@ -60,7 +64,7 @@ export class TrainingService {
   }
 
   cancelTraining(progress: number) {
-    this.trainings.push({
+    this.addDataToDatabase({
       ...this.currentTraining,
       duration: this.currentTraining.duration * (progress / 100),
       calories: this.currentTraining.calories * (progress / 100),
@@ -77,7 +81,19 @@ export class TrainingService {
     return {...this.currentTraining};
   }
 
-  getFinishedExercises() {
-    return this.trainings.slice();
+  fetchFinishedExercises() {
+    this.db.collection('finishedTrainings')
+      .valueChanges()
+      .subscribe((trainings: Training[]) => {
+        console.log(trainings)
+        this.finishedTrainingsArrayChanged.next(trainings);
+      });
+    //return this.trainings.slice();
+  }
+
+  private addDataToDatabase(training: Training) {
+    this.db
+      .collection('finishedTrainings')
+      .add(training);
   }
 }

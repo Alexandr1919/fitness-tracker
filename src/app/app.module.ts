@@ -6,10 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
-import { AuthService } from './auth/auth.service';
-import { TrainingService } from './training/training.service';
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from './material.module';
+
+import { AuthService } from './auth/auth.service';
+import { TrainingService } from './training/training.service';
+
 import { AppComponent } from './app.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { LoginComponent } from './auth/login/login.component';
