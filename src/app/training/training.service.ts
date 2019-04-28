@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Training } from '../training.model';
 
@@ -16,12 +16,13 @@ export class TrainingService {
 
   // should store the training user selected
   private currentTraining: Training;
+  private fireBaseSubscriptions: Subscription[] = [];
 
   constructor(private db: AngularFirestore) {
   }
 
   fetchAvailableTrainings() {
-    this.db
+    this.fireBaseSubscriptions.push(this.db
       .collection('availableTrainings')
       .snapshotChanges()
       .pipe(map(docArray => {
@@ -35,15 +36,12 @@ export class TrainingService {
       .subscribe((trainings: Training[]) => {
         this.availableTrainings = trainings;
         this.trainingsArrayChanged.next([...this.availableTrainings]);
-      });
+      })
+    );
   }
 
   // called on click start button
   startTraining(selectedId: string) {
-    // this is how you can update traingings
-    // this.db.doc('availableTrainings' + selectedId).update({
-    //   lastSelected: new Date()
-    // });
     // find the exercise user selected
     this.currentTraining = this.availableTrainings.find(tr => tr.id === selectedId);
     this.trainingChanged.next({
@@ -74,7 +72,6 @@ export class TrainingService {
     this.currentTraining = null;
     // trigger says that there are no more current trainings
     this.trainingChanged.next(null);
-
   }
 
   getCurrentTraining() {
@@ -82,13 +79,17 @@ export class TrainingService {
   }
 
   fetchFinishedExercises() {
-    this.db.collection('finishedTrainings')
+    this.fireBaseSubscriptions.push(this.db.collection('finishedTrainings')
       .valueChanges()
       .subscribe((trainings: Training[]) => {
-        console.log(trainings)
         this.finishedTrainingsArrayChanged.next(trainings);
-      });
-    //return this.trainings.slice();
+      }));
+  }
+
+  cancelSubscriptions() {
+    this.fireBaseSubscriptions.forEach(
+      sub => sub.unsubscribe()
+    );
   }
 
   private addDataToDatabase(training: Training) {
