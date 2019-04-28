@@ -1,24 +1,43 @@
-import { Training } from '../training.model';
-import { Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
+import { Training } from '../training.model';
+
+@Injectable()
 export class TrainingService {
-  private availableTrainings: Training[] = [
-    { id: 'crunches', name: 'Crunches', duration: /*30*/5, calories: 8 },
-    { id: 'touch-toes', name: 'Touch Toes', duration: /*180*/5, calories: 15 },
-    { id: 'side-lunges', name: 'Side Lunges', duration: /*120*/5, calories: 18 },
-    { id: 'burpees', name: 'Burpees', duration: /*60*/5, calories: 8 }
-  ];
+  private availableTrainings: Training[] = [];
   // in order to use it in header component and hide nav bar
   trainingChanged = new Subject<Training>();
+  // triggers whenever we got new exercises after exercises finished
+  trainingsArrayChanged = new Subject<Training[]>();
+  finishedTrainingsArrayChanged = new Subject<Training[]>();
 
   // should store the training user selected
   private currentTraining: Training;
-  private trainings: Training[] = [];
+  private fireBaseSubscriptions: Subscription[] = [];
 
-  // in order to use copy of the array
-  getAvailableTrainings() {
-    // get the copy of initial array to prevent its mutation
-    return this.availableTrainings.slice();
+  constructor(private db: AngularFirestore) {
+  }
+
+  fetchAvailableTrainings() {
+    this.fireBaseSubscriptions.push(this.db
+      .collection('availableTrainings')
+      .snapshotChanges()
+      .pipe(map(docArray => {
+        return docArray.map(doc => {
+          return {
+            id: doc.payload.doc.id,
+            ...doc.payload.doc.data()
+          } as Training;
+        });
+      }))
+      .subscribe((trainings: Training[]) => {
+        this.availableTrainings = trainings;
+        this.trainingsArrayChanged.next([...this.availableTrainings]);
+      })
+    );
   }
 
   // called on click start button
@@ -32,7 +51,7 @@ export class TrainingService {
 
   completeTraining() {
     // save completed trainings in the training list
-    this.trainings.push({
+    this.addDataToDatabase({
       ...this.currentTraining,
       date: new Date(),
       status: 'completed'
@@ -43,7 +62,7 @@ export class TrainingService {
   }
 
   cancelTraining(progress: number) {
-    this.trainings.push({
+    this.addDataToDatabase({
       ...this.currentTraining,
       duration: this.currentTraining.duration * (progress / 100),
       calories: this.currentTraining.calories * (progress / 100),
@@ -53,14 +72,29 @@ export class TrainingService {
     this.currentTraining = null;
     // trigger says that there are no more current trainings
     this.trainingChanged.next(null);
-
   }
 
   getCurrentTraining() {
     return {...this.currentTraining};
   }
 
-  getFinishedExercises() {
-    return this.trainings.slice();
+  fetchFinishedExercises() {
+    this.fireBaseSubscriptions.push(this.db.collection('finishedTrainings')
+      .valueChanges()
+      .subscribe((trainings: Training[]) => {
+        this.finishedTrainingsArrayChanged.next(trainings);
+      }));
+  }
+
+  cancelSubscriptions() {
+    this.fireBaseSubscriptions.forEach(
+      sub => sub.unsubscribe()
+    );
+  }
+
+  private addDataToDatabase(training: Training) {
+    this.db
+      .collection('finishedTrainings')
+      .add(training);
   }
 }

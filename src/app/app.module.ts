@@ -3,11 +3,16 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+
+import { AppRoutingModule } from './app-routing.module';
+import { MaterialModule } from './material.module';
 
 import { AuthService } from './auth/auth.service';
 import { TrainingService } from './training/training.service';
-import { AppRoutingModule } from './app-routing.module';
-import { MaterialModule } from './material.module';
+
 import { AppComponent } from './app.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -19,6 +24,8 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { StopTrainingComponent } from './training/current-training/stop-training.component';
+
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -40,7 +47,10 @@ import { StopTrainingComponent } from './training/current-training/stop-training
     FormsModule,
     MaterialModule,
     AppRoutingModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    AngularFireAuthModule
   ],
   providers: [AuthService, TrainingService],
   bootstrap: [AppComponent],

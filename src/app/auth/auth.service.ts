@@ -4,55 +4,73 @@ import { Subject } from 'rxjs';
 
 import { User } from './user.model';
 import { AuthData } from './auth-data.model';
+import {AngularFireAuth} from '@angular/fire/auth';
+import {TrainingService} from '../training/training.service';
 
 @Injectable()
 export class AuthService {
   // create a object instance from rxjs, that allows to emit events and subscribe to it in other parts of app
   authChange = new Subject<boolean>();
+  private isAuthenticated = false;
   private user: User;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private afAuth: AngularFireAuth,
+    private trainingService: TrainingService
+  ) {}
 
+  initAuthListener() {
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.isAuthenticated = true;
+        // pass the value of true to use it in other components
+        this.authChange.next(true);
+        this.router.navigate(['/training']);
+      } else {
+          this.trainingService.cancelSubscriptions();
+          this.authChange.next(false);
+          this.router.navigate(['/login']);
+          this.isAuthenticated = false;
+      }
+    });
   }
 
   // method should be called when user signs up
   registerUser(authData: AuthData) {
     // email we get from the form stored in the user object
-    this.user = {
-      email: authData.email,
-      userId: Math.round(Math.random() * 10000). toString()
-    };
-    this.authSuccessfully();
+    this.afAuth.auth.createUserWithEmailAndPassword(
+      authData.email.toString().trim(),
+      authData.password
+    ).then(() => {})
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   // method should be called when user login
   login(authData: AuthData) {
+    this.afAuth.auth.signInWithEmailAndPassword(
+      authData.email,
+      authData.password
+    ).then(() => {})
+      .catch(error => {
+        console.log(error);
+      });
+
     this.user = {
       email: authData.email,
       userId: Math.round(Math.random() * 10000). toString()
     };
-    this.authSuccessfully();
   }
 
   // method should be called when user logout
   logout() {
-    this.user = null;
-    this.authChange.next(false);
-    this.router.navigate(['/login']);
-  }
-
-  // get access to the user
-  getUser() {
-    return { ...this.user };
+    this.afAuth.auth.signOut();
   }
 
   isAuth() {
-    return this.user != null;
+    return this.isAuthenticated;
   }
 
-  private authSuccessfully() {
-    // pass the value of true to use it in other components
-    this.authChange.next(true);
-    this.router.navigate(['/training']);
-  }
 }
