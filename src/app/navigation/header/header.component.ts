@@ -14,8 +14,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sidenavToggle = new EventEmitter<void>();
   isAuth: boolean;
   isTraining: Training;
-  authSubscription: Subscription;
-  isTrainingSubscription: Subscription;
+  private authSubscription: Subscription;
+  private isTrainingSubscription: Subscription;
 
   constructor(private authService: AuthService, private trainingService: TrainingService) {
   }
@@ -41,7 +41,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // don't forget to unsubscribe
     this.authSubscription.unsubscribe();
   }
 

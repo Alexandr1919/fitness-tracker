@@ -11,7 +11,7 @@ import { AuthService } from '../../auth/auth.service';
 export class SidenavListComponent implements OnInit, OnDestroy {
   @Output() closeSidenav = new EventEmitter<void>();
   isAuth: boolean;
-  authSubscription: Subscription;
+  private authSubscription: Subscription;
 
   constructor(private authService: AuthService) { }
 

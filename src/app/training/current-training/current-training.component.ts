@@ -18,6 +18,7 @@ export class CurrentTrainingComponent implements OnInit {
   ngOnInit() {
     this.startTimer();
   }
+
   startTimer() {
     // count duration percentage of the specific training
     const step = this.trainingService.getCurrentTraining().duration / this.TRAINING_COMPLETE_SCALE * 1000;
