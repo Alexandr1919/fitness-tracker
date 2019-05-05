@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Store } from '@ngrx/store';
 import { Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Training } from '../training.model';
 import { UiService } from '../shared/ui.service';
+import * as UI from '../reducers/ui-reducer/ui.actions';
+import * as fromRoot from '../app.reducer';
 
 @Injectable()
 export class TrainingService {
@@ -21,11 +24,13 @@ export class TrainingService {
 
   constructor(
     private db: AngularFirestore,
-    private uiService: UiService
+    private uiService: UiService,
+    private store: Store<fromRoot.State>
   ) {}
 
   fetchAvailableTrainings() {
-    this.uiService.loadingStateChanged.next(true);
+    this.store.dispatch(new UI.StartLoading());
+    //this.uiService.loadingStateChanged.next(true);
     this.fireBaseSubscriptions.push(this.db
       .collection('availableTrainings')
       .snapshotChanges()
@@ -38,7 +43,8 @@ export class TrainingService {
         });
       }))
       .subscribe((trainings: Training[]) => {
-        this.uiService.loadingStateChanged.next(false);
+        this.store.dispatch(new UI.StopLoading());
+        //this.uiService.loadingStateChanged.next(false);
         this.availableTrainings = trainings;
         this.trainingsArrayChanged.next([...this.availableTrainings]);
       }, () => {
@@ -47,7 +53,8 @@ export class TrainingService {
           null,
           3000
         );
-        this.uiService.loadingStateChanged.next(false);
+        this.store.dispatch(new UI.StopLoading());
+        //this.uiService.loadingStateChanged.next(false);
         this.trainingChanged.next(null);
       })
     );

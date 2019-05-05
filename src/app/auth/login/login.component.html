@@ -30,7 +30,7 @@
       >
     </mat-form-field>
 
-    <button *ngIf="!isLoading" type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Submit</button>
-    <mat-spinner *ngIf="isLoading" diameter="30"></mat-spinner>
+    <button *ngIf="!(isLoading$ | async)" type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Submit</button>
+    <mat-spinner *ngIf="isLoading$ | async" diameter="30"></mat-spinner>
   </form>
 </section>
