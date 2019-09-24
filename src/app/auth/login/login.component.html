@@ -1,16 +1,15 @@
 <section class="login-form">
-  <form fxLayout="column" fxLayoutAlign="center center" #f="ngForm" (ngSubmit)="onSubmit(f)">
+  <form fxLayout="column" fxLayoutAlign="center center" [formGroup]="loginForm" (ngSubmit)="onSubmit(f)">
     <mat-form-field>
       <input
         type="email"
         placeholder="Your email"
         name="email"
         matInput
-        ngModel
-        #emailInput="ngModel"
+        formControlName="email"
       >
 
-      <mat-error *ngIf="emailInput.hasError('required')">
+      <mat-error *ngIf="isControlInvalid('email')">
         Field must not be empty
       </mat-error>
 
@@ -26,10 +25,10 @@
         name="password"
         minlength="6"
         matInput
-        ngModel
+        formControlName="password"
       >
     </mat-form-field>
 
-    <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
+    <button type="submit" mat-raised-button color="primary">Submit</button>
   </form>
 </section>
