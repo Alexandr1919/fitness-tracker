@@ -46,13 +46,15 @@ export class AuthService {
 
   // method should be called when user signs up
   registerUser(authData: AuthData) {
-    this.uiService.loadingStateChanged.next(true);
+    //this.uiService.loadingStateChanged.next(true);
+    this.store.dispatch({type: 'START_LOADING'});
     // email we get from the form stored in the user object
     this.afAuth.auth.createUserWithEmailAndPassword(
       authData.email.toString().trim(),
       authData.password
     ).then(() => {
-      this.uiService.loadingStateChanged.next(false);
+      //this.uiService.loadingStateChanged.next(false);
+      this.store.dispatch({type: 'STOP_LOADING'});
     })
       .catch(error => {
         this.uiService.loadingStateChanged.next(false);
@@ -62,15 +64,18 @@ export class AuthService {
 
   // method should be called when user login
   login(authData: AuthData) {
-    this.uiService.loadingStateChanged.next(true);
+    //this.uiService.loadingStateChanged.next(true);
+    this.store.dispatch({type: 'START_LOADING'});
     this.afAuth.auth.signInWithEmailAndPassword(
       authData.email,
       authData.password
     ).then(() => {
-      this.uiService.loadingStateChanged.next(false);
+      //this.uiService.loadingStateChanged.next(false);
+      this.store.dispatch({type: 'STOP_LOADING'});
     })
       .catch(error => {
-        this.uiService.loadingStateChanged.next(false);
+        //this.uiService.loadingStateChanged.next(false);
+        this.store.dispatch({type: 'STOP_LOADING'});
         this.uiService.showSnackbar(error.message, null, 3000);
       });
 
