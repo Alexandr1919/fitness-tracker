@@ -9,6 +9,8 @@ import { AuthData } from './auth-data.model';
 
 import { TrainingService } from '../training/training.service';
 import { UiService } from '../shared/ui.service';
+import { Store } from '@ngrx/store';
+import * as fromApp from '../app.reducer';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +24,8 @@ export class AuthService {
     private afAuth: AngularFireAuth,
     private trainingService: TrainingService,
     private snackBar: MatSnackBar,
-    private uiService: UiService
+    private uiService: UiService,
+    private store: Store<{ui: fromApp.State}>
   ) {}
 
   initAuthListener() {
