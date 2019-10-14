@@ -17,17 +17,12 @@ import * as fromApp from '../../app.reducer';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isLoading$: Observable<boolean>;
-  private loadingSubs: Subscription;
 
   constructor(private authService: AuthService, private uiService: UiService, private store: Store<{ui: fromApp.State}>) { }
 
   ngOnInit() {
-    this.isLoading$ = this.store.pipe(map(res => {
-      return res.ui.isLoading
-    }));
-    // this.loadingSubs = this.uiService.loadingStateChanged.subscribe(isLoading => {
-    //   this.isLoading = isLoading;
-    // });
+    // subscribing to store changes
+    this.isLoading$ = this.store.pipe(map(res => res.ui && res.ui.isLoading));
     this.loginForm = new FormGroup({
       email: new FormControl('', {
         validators: [Validators.required, Validators.email]

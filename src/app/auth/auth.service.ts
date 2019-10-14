@@ -46,14 +46,14 @@ export class AuthService {
 
   // method should be called when user signs up
   registerUser(authData: AuthData) {
-    //this.uiService.loadingStateChanged.next(true);
+    // dispatching action
     this.store.dispatch({type: 'START_LOADING'});
     // email we get from the form stored in the user object
     this.afAuth.auth.createUserWithEmailAndPassword(
       authData.email.toString().trim(),
       authData.password
     ).then(() => {
-      //this.uiService.loadingStateChanged.next(false);
+      // dispatching action
       this.store.dispatch({type: 'STOP_LOADING'});
     })
       .catch(error => {
