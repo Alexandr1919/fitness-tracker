@@ -21,7 +21,7 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 
 import { environment } from '../environments/environment';
 import { StoreModule } from '@ngrx/store';
-import { appReducer } from './app.reducer';
+import { reducers } from './app.reducer';
 
 @NgModule({
   declarations: [AppComponent, WelcomeComponent, HeaderComponent, SidenavListComponent],
@@ -35,7 +35,7 @@ import { appReducer } from './app.reducer';
     AuthModule,
     MaterialModule,
     AngularFirestoreModule,
-    StoreModule.forRoot({ui: appReducer})
+    StoreModule.forRoot(reducers)
   ],
   providers: [AuthService, UiService, TrainingService],
   bootstrap: [AppComponent]

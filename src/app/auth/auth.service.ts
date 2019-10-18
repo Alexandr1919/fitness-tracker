@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { MatSnackBar } from '@angular/material';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 
 import { User } from './user.model';
@@ -9,8 +10,8 @@ import { AuthData } from './auth-data.model';
 
 import { TrainingService } from '../training/training.service';
 import { UiService } from '../shared/ui.service';
-import { Store } from '@ngrx/store';
-import * as fromApp from '../app.reducer';
+import * as fromRoot from '../app.reducer';
+import * as UI from '../shared/ui.actions';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
     private trainingService: TrainingService,
     private snackBar: MatSnackBar,
     private uiService: UiService,
-    private store: Store<{ui: fromApp.State}>
+    private store: Store<fromRoot.State>
   ) {}
 
   initAuthListener() {
@@ -47,14 +48,14 @@ export class AuthService {
   // method should be called when user signs up
   registerUser(authData: AuthData) {
     // dispatching action
-    this.store.dispatch({type: 'START_LOADING'});
+    this.store.dispatch(new UI.StartLoading());
     // email we get from the form stored in the user object
     this.afAuth.auth.createUserWithEmailAndPassword(
       authData.email.toString().trim(),
       authData.password
     ).then(() => {
       // dispatching action
-      this.store.dispatch({type: 'STOP_LOADING'});
+      this.store.dispatch(new UI.StopLoading());
     })
       .catch(error => {
         this.uiService.loadingStateChanged.next(false);
@@ -65,17 +66,17 @@ export class AuthService {
   // method should be called when user login
   login(authData: AuthData) {
     //this.uiService.loadingStateChanged.next(true);
-    this.store.dispatch({type: 'START_LOADING'});
+    this.store.dispatch(new UI.StartLoading());
     this.afAuth.auth.signInWithEmailAndPassword(
       authData.email,
       authData.password
     ).then(() => {
       //this.uiService.loadingStateChanged.next(false);
-      this.store.dispatch({type: 'STOP_LOADING'});
+      this.store.dispatch(new UI.StopLoading());
     })
       .catch(error => {
         //this.uiService.loadingStateChanged.next(false);
-        this.store.dispatch({type: 'STOP_LOADING'});
+        this.store.dispatch(new UI.StopLoading());
         this.uiService.showSnackbar(error.message, null, 3000);
       });
 

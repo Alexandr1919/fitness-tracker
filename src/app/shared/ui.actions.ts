@@ -1,3 +1,4 @@
+// this file is intended to store all actions related to ui reducer;
 import { Action } from '@ngrx/store';
 
 export const START_LOADING = '[UI] Start Loading';
