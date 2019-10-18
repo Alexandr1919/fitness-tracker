@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { MatSnackBar } from '@angular/material';
-import { Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { User } from './user.model';
@@ -12,12 +11,10 @@ import { TrainingService } from '../training/training.service';
 import { UiService } from '../shared/ui.service';
 import * as fromRoot from '../app.reducer';
 import * as UI from '../reducers/ui-reducer/ui.actions';
+import * as Auth from '../reducers/auth-reducer/auth.actions';
 
 @Injectable()
 export class AuthService {
-  // create a object instance from rxjs, that allows to emit events and subscribe to it in other parts of app
-  authChange = new Subject<boolean>();
-  private isAuthenticated = false;
   private user: User;
 
   constructor(
@@ -32,15 +29,13 @@ export class AuthService {
   initAuthListener() {
     this.afAuth.authState.subscribe(user => {
       if (user) {
-        this.isAuthenticated = true;
-        // pass the value of true to use it in other components
-        this.authChange.next(true);
+        console.log(user)
+        this.store.dispatch(new Auth.SetAuthenticated());
         this.router.navigate(['/training']);
       } else {
           this.trainingService.cancelSubscriptions();
-          this.authChange.next(false);
+          this.store.dispatch(new Auth.SetUnauthenticated());
           this.router.navigate(['/login']);
-          this.isAuthenticated = false;
       }
     });
   }
@@ -63,6 +58,7 @@ export class AuthService {
 
   // method should be called when user login
   login(authData: AuthData) {
+    console.log(authData)
     this.store.dispatch(new UI.StartLoading());
     this.afAuth.auth.signInWithEmailAndPassword(
       authData.email,
@@ -84,10 +80,6 @@ export class AuthService {
   // method should be called when user logout
   logout() {
     this.afAuth.auth.signOut();
-  }
-
-  isAuth() {
-    return this.isAuthenticated;
   }
 
 }

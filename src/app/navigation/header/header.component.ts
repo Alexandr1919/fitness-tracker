@@ -1,31 +1,29 @@
-import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 import { AuthService } from '../../auth/auth.service';
 import { TrainingService } from '../../training/training.service';
 import { Training } from '../../training.model';
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.sass']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit {
   @Output() sidenavToggle = new EventEmitter<void>();
-  isAuth: boolean;
+  isAuth$: Observable<boolean>;
   isTraining: Training;
-  private authSubscription: Subscription;
   private isTrainingSubscription: Subscription;
 
-  constructor(private authService: AuthService, private trainingService: TrainingService) {
+  constructor(private store: Store<fromRoot.State>, private authService: AuthService, private trainingService: TrainingService) {
   }
 
   ngOnInit() {
     // subscribe to authChange trigger
-    this.authSubscription = this.authService.authChange.subscribe(authStatus => {
-      // and bind it to private boolean variable
-      this.isAuth = authStatus;
-    });
+    this.isAuth$ = this.store.select(fromRoot.getIsAuthenticated);
 
     this.isTrainingSubscription = this.trainingService.trainingChanged.subscribe(trainingStatus => {
       this.isTraining = trainingStatus;
@@ -38,10 +36,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onLogout() {
     this.authService.logout();
-  }
-
-  ngOnDestroy() {
-    this.authSubscription.unsubscribe();
   }
 
 }

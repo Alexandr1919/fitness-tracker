@@ -30,7 +30,6 @@ export class TrainingService {
 
   fetchAvailableTrainings() {
     this.store.dispatch(new UI.StartLoading());
-    //this.uiService.loadingStateChanged.next(true);
     this.fireBaseSubscriptions.push(this.db
       .collection('availableTrainings')
       .snapshotChanges()
@@ -44,7 +43,6 @@ export class TrainingService {
       }))
       .subscribe((trainings: Training[]) => {
         this.store.dispatch(new UI.StopLoading());
-        //this.uiService.loadingStateChanged.next(false);
         this.availableTrainings = trainings;
         this.trainingsArrayChanged.next([...this.availableTrainings]);
       }, () => {
@@ -54,7 +52,6 @@ export class TrainingService {
           3000
         );
         this.store.dispatch(new UI.StopLoading());
-        //this.uiService.loadingStateChanged.next(false);
         this.trainingChanged.next(null);
       })
     );
